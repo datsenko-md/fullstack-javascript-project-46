@@ -1,5 +1,7 @@
 import process from 'process';
 import path from 'path';
+import { fileURLToPath } from 'url';
+// import fs from 'fs';
 import genDiff,
 {
   normalizePath,
@@ -7,12 +9,14 @@ import genDiff,
   getEntry,
 } from '../src/genDiff.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+// const readFile = (filename) => fs.readFile(getFixturePath(filename), 'utf-8');
+
 test('genDiff', () => {
-  const filename1 = 'file1.json';
-  const filename2 = 'file2.json';
-  const cwd = process.cwd();
-  const filepath1 = path.resolve(cwd, filename1);
-  const filepath2 = path.resolve(filename2);
+  const filepath1 = getFixturePath('file1.json');
+  const filepath2 = getFixturePath('file2.json');
   const expected = `{
   - follow: false
     host: hexlet.io

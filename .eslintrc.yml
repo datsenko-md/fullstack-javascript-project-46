@@ -7,7 +7,8 @@ parserOptions:
   sourceType: module
 rules: {
   no-console: off,
-  import/extensions: off
+  import/extensions: off,
+  no-underscore-dangle: [2, { "allow": ["__filename", "__dirname"] }] # разрешает подчёркивание в именах только для двух констант
 }
 plugins:
   # https://github.com/jest-community/eslint-plugin-jest
