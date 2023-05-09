@@ -10,4 +10,5 @@
 
 ## Usage
 
-* [Asciinema](https://asciinema.org/a/583123)
+* [Asciinema (json)](https://asciinema.org/a/583123)
+* [Asciinema (yml)](https://asciinema.org/a/583674)
