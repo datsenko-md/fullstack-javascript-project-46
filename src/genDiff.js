@@ -4,6 +4,7 @@ import path from 'path';
 import process from 'process';
 import fs from 'fs';
 import _ from 'lodash';
+import yaml from 'js-yaml';
 
 const normalizePath = (filepath = '') => {
   const cwd = process.cwd();
@@ -44,13 +45,31 @@ const getEntry = (obj1, obj2, key, state) => {
   return result;
 };
 
+const getType = (filename) => {
+  const extension = path.extname(filename).slice(1);
+  const extMap = {
+    json: 'json',
+    yaml: 'yml',
+    yml: 'yml',
+  };
+
+  return extMap[extension];
+};
+
+const parseData = (data, type = 'json') => {
+  const parse = {
+    json: (content) => JSON.parse(content),
+    yml: (content) => yaml.load(content),
+  };
+  return parse[type](data);
+};
+
 const genDiff = (filepath1, filepath2) => {
-  const normalized1 = normalizePath(filepath1);
-  const normalized2 = normalizePath(filepath2);
-  const data1 = fs.readFileSync(normalized1);
-  const data2 = fs.readFileSync(normalized2);
-  const obj1 = JSON.parse(data1);
-  const obj2 = JSON.parse(data2);
+  const type = getType(filepath1);
+  const data1 = fs.readFileSync(normalizePath(filepath1));
+  const data2 = fs.readFileSync(normalizePath(filepath2));
+  const obj1 = parseData(data1, type);
+  const obj2 = parseData(data2, type);
   const keys = _.union(Object.keys(obj1), Object.keys(obj2));
   const sorted = _.sortBy(keys);
   const states = sorted.map((key) => [key, getState(obj1, obj2, key)]);
@@ -63,5 +82,7 @@ export {
   normalizePath,
   getState,
   getEntry,
+  getType,
+  parseData,
 };
 export default genDiff;
