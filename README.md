@@ -10,5 +10,6 @@
 
 ## Usage
 
-* [Asciinema (json)](https://asciinema.org/a/583123)
-* [Asciinema (yml)](https://asciinema.org/a/583674)
+* [gendiff json](https://asciinema.org/a/583123)
+* [gendiff yml](https://asciinema.org/a/583674)
+* [gendiff nested](https://asciinema.org/a/584383)
