@@ -28,17 +28,14 @@ const getType = (filename) => {
 };
 
 const getState = (obj1, obj2, key) => {
-  let state;
   if (!Object.hasOwn(obj1, key)) {
-    state = 'added';
-  } else if (!Object.hasOwn(obj2, key)) {
-    state = 'removed';
-  } else if ((obj1[key] === obj2[key]) || (_.isObject(obj1[key]) && _.isObject(obj2[key]))) {
-    state = 'unchanged';
-  } else {
-    state = 'changed';
+    return 'added';
+  } if (!Object.hasOwn(obj2, key)) {
+    return 'removed';
+  } if ((obj1[key] === obj2[key]) || (_.isObject(obj1[key]) && _.isObject(obj2[key]))) {
+    return 'unchanged';
   }
-  return state;
+  return 'changed';
 };
 
 const getValue = (obj1, obj2, key, state) => {
