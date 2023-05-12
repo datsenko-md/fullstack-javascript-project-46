@@ -11,6 +11,7 @@ import genDiff,
   stringify,
   getDiff,
   stylish,
+  plain,
 } from '../src/genDiff.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -138,4 +139,10 @@ test('stylish', () => {
   const diff = JSON.parse(readFile('diff_correct.json'));
   const expected = readFile('correct.txt');
   expect(stylish(diff)).toEqual(expected);
+});
+
+test('plain', () => {
+  const diff = JSON.parse(readFile('diff_correct.json'));
+  const expected = readFile('plain_correct.txt');
+  expect(plain(diff)).toEqual(expected);
 });
