@@ -13,3 +13,4 @@
 * [gendiff json](https://asciinema.org/a/583123)
 * [gendiff yml](https://asciinema.org/a/583674)
 * [gendiff nested](https://asciinema.org/a/584383)
+* [gendiff plain](https://asciinema.org/a/584440)
