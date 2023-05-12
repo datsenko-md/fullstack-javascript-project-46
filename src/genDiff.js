@@ -4,11 +4,19 @@ import path from 'path';
 import process from 'process';
 import fs from 'fs';
 import _ from 'lodash';
-import yaml from 'js-yaml';
+import { jsonParser, ymlParser } from './parsers.js';
 
 const normalizePath = (filepath = '') => {
   const cwd = process.cwd();
   return path.isAbsolute(filepath) ? path.resolve(filepath) : path.resolve(cwd, filepath);
+};
+
+const parseData = (data, type = 'json') => {
+  const parse = {
+    json: jsonParser,
+    yml: ymlParser,
+  };
+  return parse[type](data);
 };
 
 const getState = (obj1, obj2, key) => {
