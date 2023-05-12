@@ -12,7 +12,9 @@ const stringify = (data) => {
 const plain = (diff) => {
   const iter = (currentValue, breadcrumbs) => {
     const lines = currentValue
-      .map(([key, state, value, children]) => {
+      .map(({
+        key, state, value, children,
+      }) => {
         const currentPath = [...breadcrumbs, key].join('.');
         switch (state) {
           case 'added':

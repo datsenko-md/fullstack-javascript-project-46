@@ -62,7 +62,9 @@ const getDiff = (obj1, obj2) => {
       ? getDiff(obj1[key], obj2[key]) : [];
     const state = getState(obj1, obj2, key);
     const value = children.length > 0 ? [] : getValue(obj1, obj2, key, state);
-    return [key, state, value, children];
+    return {
+      key, state, value, children,
+    };
   });
   return diff;
 };

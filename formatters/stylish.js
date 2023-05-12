@@ -37,7 +37,9 @@ const stylish = (data, replacer = stylishReplacer, spacesCount = stylishSpacesCo
     const currentIndent = replacer.repeat(indentSize);
     const bracketIndent = replacer.repeat(indentSize + 2 - spacesCount);
     const lines = currentValue
-      .flatMap(([key, state, value, children]) => {
+      .flatMap(({
+        key, state, value, children,
+      }) => {
         switch (state) {
           case 'added':
             return [`${currentIndent}+ ${key}: ${stringify(...value, depth + 1)}`];
