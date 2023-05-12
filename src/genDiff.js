@@ -4,7 +4,7 @@ import path from 'path';
 import process from 'process';
 import fs from 'fs';
 import _ from 'lodash';
-import { jsonParser, ymlParser } from './parsers.js';
+import getParser from './parsers.js';
 
 const normalizePath = (filepath = '') => {
   const cwd = process.cwd();
@@ -24,14 +24,6 @@ const getType = (filename) => {
     throw new Error(`Files with extension .${extension} is not allowed`);
   }
   return extMap[extension];
-};
-
-const parseData = (data, type = 'json') => {
-  const parse = {
-    json: jsonParser,
-    yml: ymlParser,
-  };
-  return parse[type](data);
 };
 
 const getState = (obj1, obj2, key) => {
@@ -74,113 +66,13 @@ const getDiff = (obj1, obj2) => {
   return diff;
 };
 
-const stylishReplacer = ' ';
-const stylishSpacesCount = 4;
-
-const stringify = (
-  currentValue,
-  depth = 1,
-  replacer = stylishReplacer,
-  spacesCount = stylishSpacesCount,
-) => {
-  if (!_.isObject(currentValue) || currentValue === null) {
-    return `${currentValue}`;
-  }
-
-  const indentSize = depth * spacesCount;
-  const currentIndent = replacer.repeat(indentSize);
-  const bracketIndent = replacer.repeat(indentSize - spacesCount);
-  const lines = Object
-    .entries(currentValue)
-    .map(([key, value]) => `${currentIndent}${key}: ${stringify(value, depth + 1, replacer, spacesCount)}`);
-
-  return [
-    '{',
-    ...lines,
-    `${bracketIndent}}`,
-  ].join('\n');
-};
-
-const stylish = (data, replacer = stylishReplacer, spacesCount = stylishSpacesCount) => {
-  const iter = (currentValue, depth) => {
-    if (!_.isArray(currentValue) || currentValue === null) {
-      return `${currentValue}`;
-    }
-
-    const indentSize = depth * spacesCount - 2;
-    const currentIndent = replacer.repeat(indentSize);
-    const bracketIndent = replacer.repeat(indentSize + 2 - spacesCount);
-    const lines = currentValue
-      .flatMap(([key, state, value, children]) => {
-        switch (state) {
-          case 'added':
-            return [`${currentIndent}+ ${key}: ${stringify(...value, depth + 1)}`];
-          case 'removed':
-            return [`${currentIndent}- ${key}: ${stringify(...value, depth + 1)}`];
-          case 'changed':
-            return [
-              `${currentIndent}- ${key}: ${stringify(value[0], depth + 1)}`,
-              `${currentIndent}+ ${key}: ${stringify(value[1], depth + 1)}`,
-            ];
-          default:
-            return children.length > 0 ? `${currentIndent}  ${key}: ${iter(children, depth + 1)}`
-              : `${currentIndent}  ${key}: ${stringify(...value, depth + 1)}`;
-        }
-      });
-
-    return [
-      '{',
-      ...lines,
-      `${bracketIndent}}`,
-    ].join('\n');
-  };
-
-  return iter(data, 1);
-};
-
-const plainStringify = (data) => {
-  if (_.isObject(data)) {
-    return '[complex value]';
-  } if (_.isNull(data) || _.isBoolean(data)) {
-    return `${data}`;
-  }
-  return `'${data}'`;
-};
-
-const plain = (diff) => {
-  const iter = (currentValue, breadcrumbs) => {
-    const lines = currentValue
-      .map(([key, state, value, children]) => {
-        const currentPath = [...breadcrumbs, key].join('.');
-        switch (state) {
-          case 'added':
-            return `Property '${currentPath}' was added with value: ${plainStringify(...value)}`;
-          case 'removed':
-            return `Property '${currentPath}' was removed`;
-          case 'changed':
-            return `Property '${currentPath}' was updated. From ${plainStringify(value[0])} to ${plainStringify(value[1])}`;
-          default:
-            return children.length > 0 ? iter(children, [...breadcrumbs, key]) : '';
-        }
-      })
-      .filter((line) => line !== '');
-    return lines.join('\n');
-  };
-
-  return iter(diff, []);
-};
-
-const format = (diff, formatter) => formatter(diff);
-
-const genDiff = (filepath1, filepath2, formatter = stylish) => {
+  const parse = getParser(getType(filepath1));
   const data1 = readFile(filepath1);
   const data2 = readFile(filepath2);
-  const type1 = getType(filepath1);
-  const type2 = getType(filepath2);
-  const obj1 = parseData(data1, type1);
-  const obj2 = parseData(data2, type2);
+  const obj1 = parse(data1);
+  const obj2 = parse(data2);
   const diff = getDiff(obj1, obj2);
-  const formatted = format(diff, formatter);
+  const formatted = format(diff);
   return formatted;
 };
 
@@ -188,8 +80,7 @@ export {
   normalizePath,
   getState,
   getType,
-  parseData,
-  stringify,
+  // stringify,
   getDiff,
   stylish,
   plain,

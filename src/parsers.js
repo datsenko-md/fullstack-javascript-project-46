@@ -1,9 +1,16 @@
+import _ from 'lodash';
 import yaml from 'js-yaml';
 
-const jsonParser = (data) => JSON.parse(data);
-const ymlParser = (data) => yaml.load(data) ?? {};
+const getParser = (type) => {
+  const parsers = {
+    json: (data) => JSON.parse(data),
+    yml: (data) => yaml.load(data) ?? {},
+  };
+  if (!_.has(parsers, type)) {
+    throw new Error(`Unknown file type: ${type.toUpperCase()}`);
+  }
 
-export {
-  jsonParser,
-  ymlParser,
+  return parsers[type];
 };
+
+export default getParser;

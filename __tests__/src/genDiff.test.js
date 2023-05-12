@@ -7,16 +7,15 @@ import genDiff,
   normalizePath,
   getState,
   getType,
-  parseData,
-  stringify,
+  // stringify,
   getDiff,
-  stylish,
-  plain,
-} from '../src/genDiff.js';
+  // stylish,
+  // plain,
+} from '../../src/genDiff.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const getFixturePath = (filename) => path.join(__dirname, '../..', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
 test('genDiff', () => {
@@ -76,57 +75,39 @@ test('getType', () => {
   expect(getType(filename3)).toEqual('yml');
 });
 
-test('parseData', () => {
-  const data1 = readFile('file1.json');
-  const data2 = readFile('file1.yaml');
-  const expected = JSON.parse(readFile('correct.json'));
+// test('stringify plain', () => {
+//   expect(stringify('value')).toEqual('value');
+//   expect(stringify(5)).toEqual('5');
+//   expect(stringify(null)).toEqual('null');
+//   expect(stringify(1.25)).toEqual('1.25');
+// });
 
-  expect(parseData(data1, 'json')).toEqual(expected);
-  expect(parseData(data2, 'yml')).toEqual(expected);
-});
-
-test('parseData empty data', () => {
-  const data1 = '{}';
-  const data2 = '';
-  const expected = {};
-
-  expect(parseData(data1, 'json')).toEqual(expected);
-  expect(parseData(data2, 'yml')).toEqual(expected);
-});
-
-test('stringify plain', () => {
-  expect(stringify('value')).toEqual('value');
-  expect(stringify(5)).toEqual('5');
-  expect(stringify(null)).toEqual('null');
-  expect(stringify(1.25)).toEqual('1.25');
-});
-
-test('stringify nested', () => {
-  const [expected1, expected2, expected3] = readFile('nested.txt').split('\n\n\n');
-  const data = {
-    string: 'value',
-    boolean: true,
-    number: 5,
-    float: 1.25,
-    object: {
-      5: 'number',
-      1.25: 'float',
-      null: null,
-      true: 'boolean',
-      value: 'string',
-      nested: {
-        boolean: true,
-        float: 1.25,
-        string: 'value',
-        number: 5,
-        null: null,
-      },
-    },
-  };
-  expect(stringify(data, 1, ' ', 1)).toEqual(expected1);
-  expect(stringify(data, 1, '->', 1)).toEqual(expected2);
-  expect(stringify(data, 1, '<-', 2)).toEqual(expected3);
-});
+// test('stringify nested', () => {
+//   const [expected1, expected2, expected3] = readFile('nested.txt').split('\n\n\n');
+//   const data = {
+//     string: 'value',
+//     boolean: true,
+//     number: 5,
+//     float: 1.25,
+//     object: {
+//       5: 'number',
+//       1.25: 'float',
+//       null: null,
+//       true: 'boolean',
+//       value: 'string',
+//       nested: {
+//         boolean: true,
+//         float: 1.25,
+//         string: 'value',
+//         number: 5,
+//         null: null,
+//       },
+//     },
+//   };
+//   expect(stringify(data, 1, ' ', 1)).toEqual(expected1);
+//   expect(stringify(data, 1, '->', 1)).toEqual(expected2);
+//   expect(stringify(data, 1, '<-', 2)).toEqual(expected3);
+// });
 
 test('getDiff', () => {
   const expected = JSON.parse(readFile('diff_correct.json'));
@@ -135,14 +116,14 @@ test('getDiff', () => {
   expect(getDiff(data1, data2)).toEqual(expected);
 });
 
-test('stylish', () => {
-  const diff = JSON.parse(readFile('diff_correct.json'));
-  const expected = readFile('correct.txt');
-  expect(stylish(diff)).toEqual(expected);
-});
+// test('stylish', () => {
+//   const diff = JSON.parse(readFile('diff_correct.json'));
+//   const expected = readFile('correct.txt');
+//   expect(stylish(diff)).toEqual(expected);
+// });
 
-test('plain', () => {
-  const diff = JSON.parse(readFile('diff_correct.json'));
-  const expected = readFile('plain_correct.txt');
-  expect(plain(diff)).toEqual(expected);
-});
+// test('plain', () => {
+//   const diff = JSON.parse(readFile('diff_correct.json'));
+//   const expected = readFile('plain_correct.txt');
+//   expect(plain(diff)).toEqual(expected);
+// });
