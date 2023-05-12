@@ -4,6 +4,7 @@ import path from 'path';
 import process from 'process';
 import fs from 'fs';
 import _ from 'lodash';
+import getFormatter from '../formatters/index.js';
 import getParser from './parsers.js';
 
 const normalizePath = (filepath = '') => {
@@ -66,6 +67,8 @@ const getDiff = (obj1, obj2) => {
   return diff;
 };
 
+const genDiff = (filepath1, filepath2, formatName = 'stylish') => {
+  const format = getFormatter(formatName);
   const parse = getParser(getType(filepath1));
   const data1 = readFile(filepath1);
   const data2 = readFile(filepath2);
@@ -80,9 +83,7 @@ export {
   normalizePath,
   getState,
   getType,
-  // stringify,
   getDiff,
-  stylish,
-  plain,
+  getValue,
 };
 export default genDiff;

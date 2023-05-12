@@ -5,12 +5,10 @@ import fs from 'fs';
 import genDiff,
 {
   normalizePath,
+  getValue,
   getState,
   getType,
-  // stringify,
   getDiff,
-  // stylish,
-  // plain,
 } from '../../src/genDiff.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -75,39 +73,10 @@ test('getType', () => {
   expect(getType(filename3)).toEqual('yml');
 });
 
-// test('stringify plain', () => {
-//   expect(stringify('value')).toEqual('value');
-//   expect(stringify(5)).toEqual('5');
-//   expect(stringify(null)).toEqual('null');
-//   expect(stringify(1.25)).toEqual('1.25');
-// });
-
-// test('stringify nested', () => {
-//   const [expected1, expected2, expected3] = readFile('nested.txt').split('\n\n\n');
-//   const data = {
-//     string: 'value',
-//     boolean: true,
-//     number: 5,
-//     float: 1.25,
-//     object: {
-//       5: 'number',
-//       1.25: 'float',
-//       null: null,
-//       true: 'boolean',
-//       value: 'string',
-//       nested: {
-//         boolean: true,
-//         float: 1.25,
-//         string: 'value',
-//         number: 5,
-//         null: null,
-//       },
-//     },
-//   };
-//   expect(stringify(data, 1, ' ', 1)).toEqual(expected1);
-//   expect(stringify(data, 1, '->', 1)).toEqual(expected2);
-//   expect(stringify(data, 1, '<-', 2)).toEqual(expected3);
-// });
+test('getType wrong type', () => {
+  const filename = 'file3.yml2';
+  expect(() => getType(filename)).toThrow(Error);
+});
 
 test('getDiff', () => {
   const expected = JSON.parse(readFile('diff_correct.json'));
@@ -116,14 +85,19 @@ test('getDiff', () => {
   expect(getDiff(data1, data2)).toEqual(expected);
 });
 
-// test('stylish', () => {
-//   const diff = JSON.parse(readFile('diff_correct.json'));
-//   const expected = readFile('correct.txt');
-//   expect(stylish(diff)).toEqual(expected);
-// });
-
-// test('plain', () => {
-//   const diff = JSON.parse(readFile('diff_correct.json'));
-//   const expected = readFile('plain_correct.txt');
-//   expect(plain(diff)).toEqual(expected);
-// });
+test('getValue', () => {
+  const obj1 = {
+    key1: 'value1',
+    key2: 'value2',
+    key3: 'value3',
+  };
+  const obj2 = {
+    key0: 'value0',
+    key2: 'value2',
+    key3: 'value4',
+  };
+  expect(getValue(obj1, obj2, 'key0', 'added')).toEqual(['value0']);
+  expect(getValue(obj1, obj2, 'key1', 'removed')).toEqual(['value1']);
+  expect(getValue(obj1, obj2, 'key2', 'unchanged')).toEqual(['value2']);
+  expect(getValue(obj1, obj2, 'key3', 'changed')).toEqual(['value3', 'value4']);
+});

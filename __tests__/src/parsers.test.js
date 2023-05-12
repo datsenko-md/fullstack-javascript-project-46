@@ -15,7 +15,7 @@ beforeEach(() => {
   parse2 = getParser('yml');
 });
 
-test('parseData', () => {
+test('parse', () => {
   const data1 = readFile('file1.json');
   const data2 = readFile('file1.yaml');
   const expected = JSON.parse(readFile('correct.json'));
@@ -23,10 +23,14 @@ test('parseData', () => {
   expect(parse2(data2)).toEqual(expected);
 });
 
-test('parseData empty data', () => {
+test('parse empty data', () => {
   const data1 = '{}';
   const data2 = '';
   const expected = {};
   expect(parse1(data1)).toEqual(expected);
   expect(parse2(data2, 'yml')).toEqual(expected);
+});
+
+test('parse wrong type', () => {
+  expect(() => getParser('json2')).toThrow(Error);
 });
