@@ -20,7 +20,9 @@ const getType = (filename) => {
     yaml: 'yml',
     yml: 'yml',
   };
-
+  if (!Object.keys(extMap).includes(extension)) {
+    throw new Error(`Files with extension .${extension} is not allowed`);
+  }
   return extMap[extension];
 };
 
