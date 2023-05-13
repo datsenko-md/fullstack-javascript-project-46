@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "GenDiff project",
-  "main": "package.json",
+  "main": "src/genDiff.js",
   "scripts": {
     "test": "npx jest"
   },
