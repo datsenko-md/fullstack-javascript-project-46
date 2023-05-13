@@ -3,7 +3,7 @@ import _ from 'lodash';
 const stringify = (data) => {
   if (_.isObject(data)) {
     return '[complex value]';
-  } if (_.isNull(data) || _.isBoolean(data)) {
+  } if (_.isNull(data) || _.isBoolean(data) || _.isNumber(data)) {
     return `${data}`;
   }
   return `'${data}'`;
